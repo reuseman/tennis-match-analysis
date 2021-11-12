@@ -3,8 +3,4 @@ nb-examples/
 .virtual_documents/
 
 datasets/players.csv
-
-prova.ipynb
-prova-bak.ipynb
-image-20211017-122801.png
-image-20211017-122846.png
+datasets/tennis_matches_cleaned.csv
