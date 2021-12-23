@@ -1,37 +1,18 @@
 
-# TODO
+Datamining da fare subito:
 
-## 1_data_analysis
-    - clean the notebook and leave only what's necessary
+- aggiornare discussione k-means con nuove immagini
 
-## 2_data_preparation
-    - add code for plotting created feature (to search outliers)
-    - clean the notebook
-    - cambiare mano, usando la moda escludendo
-
-### TODO PRIMA DEL CLUSTERING 
-- Vedere instogramma sul numero di partite per capire che treshold dare nello scarto
-- 
+- rifare discussione di dbscan e gerarchico -> guarda che discussione ha fatto l'altro gruppo di DM l’hanno scorso e copia le stesse visualizzazioni
 
 
-### TODO organizzazione codice
-- 
 
+Datamining miglioramenti:
 
-### TODO Features
+- aggiungere schemi nel data understanding e feature engineering -> es.: un grafico con numero di null per ogni attributo
 
-#### Prof
-- how many times did the player win during a given period
-- how many matches the player played in a given period
-- a ratio between the previous indicators
-- percentage of aces related to the number of first serves made
-- number of breakpoints numbers w.r.t. all games
+- aggiungere un pochino di feature cleaning (la prof a scritto focalizzassi soprattutto su quello)
 
-##### Complex
-- massimo round che ha raggiunto un giocatore in un torneo
-- match vinti su match totali che avrei dovuto giocare in un match
-- distanza fra tornei giocati pesata dal numero di partite per torneo (NO perchè dataset incompleto / pochi dati)
-- feature tipiche del match, punti, game, ecc...
+- provare a non droppare tutti e 400 i player con ultimo rank point uguale a null ma bensì provare a sostituirlo con il penultimo
 
-
-[X][X][X][X]
+- fare un cleaning più furbo rispetto a interpolare tutte le feature mancanti con la media.
