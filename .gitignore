@@ -1,6 +1,7 @@
 nb-examples/
 .ipynb_checkpoints/
 .virtual_documents/
+.DS_Store
 
 datasets/players.csv
 datasets/tennis_matches_cleaned.csv
