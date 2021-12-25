@@ -5,3 +5,14 @@ nb-examples/
 
 datasets/players.csv
 datasets/tennis_matches_cleaned.csv
+
+.vscode
+
+report/*.aux
+report/*.log
+report/*.out
+report/*.pdf
+report/*.toc
+report/*.gz
+report/*.fls
+report/*.fdb_latexmk

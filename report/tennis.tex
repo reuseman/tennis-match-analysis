@@ -30,7 +30,6 @@
 % - INDIVIDUARE PROBLEMI E PROPORRE POSSIBILI SOLUZIONI\\
 
 
-
 \section{Introduction}
 
 \section{Data understanding}
@@ -49,7 +48,7 @@ The type of surface on which the players had the game. On 185793 observations, 2
 The number of players in the draw, that is often rounded up to the next power of $2$. The most common draw size for a tourney is $32$ followed by $2,4,64$.
 
 \paragraph{tourney\_level}
-The level of the tourney that is different for men and women, and hence it gives information about the sex of a tournament. On 185790 observations 19 are unique and 25 are missing. They are mostly character, but for ITF competitions it's an integer that states the prize. The only ambiguous level is the $D$ that is used both for men and women, but it can be disambiguated thanks to the fact that for men it's used only in the tourney whose name are “Davis Cup F.” Moreover, $O$ is a category used to denote the Olympics, where both men and women can participate. 
+The level of the tourney that is different for men and women, and hence it gives information about the sex of a tournament. On 185790 observations 19 are unique and 25 are missing. They are mostly character, but for ITF competitions it's an integer that states the prize. The only ambiguous level is the $D$ that is used both for men and women, but it can be disambiguated thanks to the fact that for men it's used only in the tourney whose name is “Davis Cup F.” Moreover, $O$ is a category used to denote the Olympics, where both men and women can participate. 
 
 \paragraph{tourney\_date}
 The date when the tourney started. On 185791 observations of which $28$ are missing.
@@ -207,110 +206,108 @@ The ratio between the player's last ranking points (last\_rank\_points) and his 
 \paragraph{lrpOnMxrp}
 The ratio between the player's last ranking points (last\_rank\_points) and the maximum ones he ever achieved (max\_rank\_points).
 
+% \paragraph{Note:}
+% For that last two features we had to perform additional operations to ensure that the last value in chronological order was not null. In this way we could ensure that the newly created feature wouldn't be null.
+
 \paragraph{Other trivial features}
 name, gender, ht, age, hand, total\_tourneys\_played, total\_matches\_played,\\ total\_matches\_won, last\_rank\_points, mean\_rank\_points, max\_rank\_points, variance\_rank\_points, \\ mean\_tourney\_spectators, max\_tourney\_spectators, mean\_tourney\_revenue, max\_tourney\_revenue.    
+
+\subsection{Features cleaning}
+At this stage we performed an initial cleaning of those features by filling some features (\textit{age},  \textit{mean\_rank\_points},  \textit{max\_rank\_points},  \textit{last\_rank\_points},  \textit{variance\_rank\_points}) being null for some records by using the mean across all the records.
+
 \newpage
 \section{Clustering}
-Since in the player's dataframe there was a big number of records with NaN values, corresponding to the in-match statistics (rel\_ace, rel\_df, rel\_1stIn etc.), we set a threshold establishing that every player in order to be in the dataframe should have played at list 15 matches with non-null values for these features.
-Then we selected the features which seemed to better represent the “strength” of a player, and we performed the correlation analysis (Fig. \ref{fig:correlation_plot}) in order to have a narrower selection. Whenever two features had a correlation greater than 70\% (Pearson coefficient), we discarded one of the two. 
+At the beginnig of our research we tried to find a pattern that could relate the style of the player ( \textit{rel ace},  \textit{rel df},  \textit{rel 1stIn},  \textit{rel 1stWon},  \textit{rel 2ndWon}) with respect to his strength.\\ After feature engineering, clustering and analysis we found no meaningful results. So, we decide to switch to the analysis that we will present in this report.
+
+\subsubsection{Features selection}
+We have decided to select the features respecting the following criteria in order
+\begin{itemize}
+    \item Selection of those features that may provide an interesting picture about the performance of the players.
+    \item Dropped all the couple of features that have more than `70\%` of correlation. Leaving just one feature per correlated pair.
+    \item Removed features deemed unimportant that had a good percentage of null values.
+\end{itemize}
+
+% Since in the player's dataframe there was a big number of records with NaN values, corresponding to the in-match statistics (rel\_ace, rel\_df, rel\_1stIn etc.), we set a threshold establishing that every player in order to be in the dataframe should have played at list 15 matches with non-null values for these features.
+% Then we selected the features which seemed to better represent the “strength” of a player, and we performed the correlation analysis (Fig. \ref{fig:correlation_plot}) in order to have a narrower selection. Whenever two features had a correlation greater than 70\% (Pearson coefficient), we discarded one of the two. 
+As a results we obtained the following uncorrelated features:
 \begin{center}
-    \includegraphics[width=350px]{correlation_plot}
+    \includegraphics[width=350px]{plots/correlation_plot}
     \label{fig:correlation_plot}
-    \captionof{figure}{Correlation plot of the selected features}
+    \captionof{figure}{Correlation Plot}\label{fig1}
 \end{center}
-At this point the remaining features were: 'lrpOnAvgrp', 'lrpOnMxrp', 'matches\_won\_ratio', 'mean\_rank\_points', 'variance\_rank\_points', 'mean\_tourney\_spectators', 'max\_tourney\_revenue', 'rel\_ptsWon'.\\
+At this point the remaining features were: 'lrpOnMxrp', '\textit{matches\_won\_ratio}', '\textit{mean\_rank\_points}',\\ '\textit{mean\_tourney\_spectators}', '\textit{max\_tourney\_revenue}'.\\
+Those features will be used as a starting point in the clustering.
 
-Then we observed that for three of the features ("lrpOnAvgrp", "mean\_tourney\_spectators", "rel\_ptsWon"), there were a discrete amount of outliers. So we discarded them.
-
-The remaining features will be used in all the different kind of clustering.
-
+\subsubsection{Additional Cleaning}
+Before clustering, we had to perform additional cleaning to ensure:
+\begin{itemize}
+    \item There were no null values present in the data: by dropping nan values from \textit{lrpOnMxrp} feature.
+    \item Higher quality data: after iterating between feature selection and clustering, we found out that by filtering players just by taking the one who played at least 15 games, we were able to gain higher quality results.
+\end{itemize}
 \subsection{K-means}
 
-\subsubsection{Distributions and outliers analysis}
-Being K-means suitable for globular cluster, we decided to perform logarithm to the features which follow a power law to lead to a more compact distribution (mean\_rank\_points and variance\_rank\_points) \ref{fig:mean_rank_points} \ref{fig:matches_per_year_and_month} \ref{fig:matches_per_day} \ref{fig:log_variance_rank_points}.
+\subsubsection{Distributions and preprocessing}
+Being K-means suitable for globular cluster, we decided to perform logarithm to the \textit{mean\_rank\_points} feature that follow a power law to lead to a more compact distribution:
+\ref{fig:mean_rank_points}  \ref{fig:log_mean_rank_points}.
 
 \begin{figure}[h]
 \centering
 \begin{minipage}{.5\textwidth}
 \centering
-\includegraphics[width=\textwidth]{mean_rank_points}
+\includegraphics[width=\textwidth]{plots/kmeans/preprocessing/mean_rank_points}
 \captionof{figure}{Mean rank points}
 \label{fig:mean_rank_points}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
 \centering
-\includegraphics[width=\textwidth]{variance_rank_points}
+\includegraphics[width=\textwidth]{plots/kmeans/preprocessing/log_mean_rank_points.png}
 \captionof{figure}{Variance rank points}
-\label{fig:matches_per_year_and_month}
-\end{minipage}
-\begin{minipage}{.5\textwidth}
-\centering
-\includegraphics[width=235px]{log_mean_rank_points}
-\captionof{figure}{Log mean rank points}
-\label{fig:matches_per_day}
-\end{minipage}%
-\begin{minipage}{.5\textwidth}
-\centering
-\includegraphics[width=235px]{log_variance_rank_points}
-\captionof{figure}{Log variance rank points}
-\label{fig:log_variance_rank_points}
+\label{fig:log_mean_rank_points}
 \end{minipage}
 \end{figure}
 
 \subsubsection{Optimal K}
-The optimal choice for k was done by following the elbow rule, that suggested to use $k=4$ where the SSE score was 96.214 (Fig. \ref{fig:kmeans_elbow_rule}). The clusters were fairly balanced and all of them crossed the Average Silhoutte Score of 0.44 (Fig. \ref{fig:kmeans_silhouette_score}). In other words, the closer it is to one, the better the object is matched to its own cluster and poorly matched to neighbouring clusters.
+The optimal choice for k was done by following the elbow rule, that suggested to use $k=4$ where the SSE score was 185.316 (Fig. \ref{fig:kmeans_elbow_rule}). The clusters were fairly balanced and all of them crossed the Average Silhoutte Score of 0.47 (Fig. \ref{fig:kmeans_silhouette_score}). In other words, the closer it is to one, the better the object is matched to its own cluster and poorly matched to neighbouring clusters.
 
 
 \begin{figure}[!h]
 \centering
 \begin{minipage}{.5\textwidth}
 \centering
-\includegraphics[width=\textwidth]{kmeans_elbow_rule}
+\includegraphics[width=\textwidth]{plots/kmeans/kmeans_elbow_rule}
 \captionof{figure}{Elbow rule}
 \label{fig:kmeans_elbow_rule}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
 \centering
-\includegraphics[width=\textwidth]{kmeans_silhouette_score}
+\includegraphics[width=\textwidth]{plots/kmeans/kmeans_silhouette_score}
 \captionof{figure}{Silhouette score}
 \label{fig:kmeans_silhouette_score}
 \end{minipage}
 \end{figure}
 
 \subsubsection{Results interpretation}
-Looking at the histograms (\ref{fig:total_match_played_kmeans}, \ref{fig:mean_rank_points_kmeans}, \ref{fig:age_kmeans}, \ref{fig:lrpOnAvgrp_kmeans}) we can interpret that:
+Clustering does not clearly distinguish between classes of players, however it is possible to find fairly defined patterns by observing the following histograms (\ref{fig:total_match_played_kmeans}, \ref{fig:mean_rank_points_kmeans}, \ref{fig:age_kmeans}, \ref{fig:lrpOnAvgrp_kmeans}) and the plot related to the centroids  and the plot regarding the centroids (\ref{fig:kmeans_results}).
 
-\begin{itemize}
-    \item{ \textbf{Cluster 1} represents the young promises: with good mean\_rank\_points, low age and a strong growth in ranking points.}
-    \item{ \textbf{Cluster 0}: represents the declining strong players: older, with a good mean\_rank\_points but with a decreasing one.}
-    \item{ \textbf{Cluster 2,3} represent the several worst players, divided in:}
-    \begin{itemize}
-        \item{2: older and declining player.}
-        \item{3: older and slightly increasing in score.}
-    \end{itemize}
-\end{itemize}
+% \begin{itemize}
+%     \item{ \textbf{Cluster 0} represents the young promises: those with low mean\_rank\_points, an average low age and on average the ones with the strongest trends of growth (looking at the \textit{lrpOnAvgrp}).}
+%     \item{ \textbf{Cluster 1} represent the strongest players: with experience and a generally higher age. They have high mean\_rank\_points and perform the best in term of matches won ratio.}
+%     \item{ \textbf{Cluster 2} represent good players with a decreasing trend.}
+%     \item{ \textbf{Cluster 3}: represents the bad players: with low mean\_rank\_points and a decreasing trend.}
 
-%- forti, con un numero di match piu alti
-%	- forti in declino e vecchi (e non prende gli outliers)
-%	- forti in ascesa e giovani (promesse) con un gran numero match giocati
-%- deboli, con un numero di match piu basso
-%	- forte declino e piu vecchi
-%	- forte ascesa e giovani
-	
-%	(Fig. \ref{fig:kmeans_results})
-%	mean_rank_points, age, lrp_onAvgrp, total_matches_plyaed
+% \end{itemize}
 
 \begin{figure}
 \centering
 \begin{minipage}{.5\textwidth}
 \centering
-\includegraphics[width=\textwidth]{total_match_played_kmeans}
+\includegraphics[width=\textwidth]{plots/kmeans/hist_total_matches.png}
 \captionof{figure}{total\_matches\_played histogram}
 \label{fig:total_match_played_kmeans}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
 \centering
-\includegraphics[width=\textwidth]{mean_rank_points_kmeans}
+\includegraphics[width=\textwidth]{plots/kmeans/hist_mean_rank_points.png}
 \captionof{figure}{mean\_rank\_points histogram}
 \label{fig:mean_rank_points_kmeans}
 \end{minipage}
@@ -318,13 +315,13 @@ Looking at the histograms (\ref{fig:total_match_played_kmeans}, \ref{fig:mean_ra
 \centering
 \begin{minipage}{.5\textwidth}
 \centering
-\includegraphics[width=\textwidth]{age_kmeans}
+\includegraphics[width=\textwidth]{plots/kmeans/hist_age.png}
 \captionof{figure}{age histogram}
 \label{fig:age_kmeans}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
 \centering
-\includegraphics[width=\textwidth]{lrpOnAvgrp_kmeans}
+\includegraphics[width=\textwidth]{plots/kmeans/hist_lrpOnAvgrp.png}
 \captionof{figure}{lrpOnAvgrp histogram}
 \label{fig:lrpOnAvgrp_kmeans}
 \end{minipage}
@@ -332,34 +329,42 @@ Looking at the histograms (\ref{fig:total_match_played_kmeans}, \ref{fig:mean_ra
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=.6\textwidth]{kmeans_results}
+\includegraphics[width=\textwidth]{plots/kmeans/kmeans_results}
 \captionof{figure}{Results of K-means}
 \label{fig:kmeans_results}
 \end{figure}
 
+
+
 \newpage
+
 \subsection{Density based}
-The set of feature used for DBSCAN is the same as Kmeans. Here we opted to avoid the logarithm transformation and to use the StandardScaler rather than the MinMaxScaler, in order to give more weight to the good outliers that are an intrinsic characteristic of competitive games.\\
-To understand a good range of values for eps we print the following plot \ref{fig:dbscan_distances} to check the distances between the k-th values for each point.
+The set of feature used for DBSCAN is the same as Kmeans as well as for the applied transformations.\\
+To understand a good range of values for eps we print the following plot \ref{fig:dbscan_distances} to check the distances between the k-th nearest values for each possible point. Each distance is plotted in the x axis ordered with respect to the k-th nearest value.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=\textwidth]{dbscan_distances}
+\includegraphics[width=\textwidth]{plots/dbscan/dbscan_distances}
 \captionof{figure}{Noise points with the k-th nearest neighbor at farther distance}
 \label{fig:dbscan_distances}
 \end{figure}
 
-Then we run a grid-search using as a range of values for eps = $[0.1, 2.9]$ \ref{fig:dbscan_metrics}. Through the grid search, we could get a better understanding of the kind of results we could expect for each rank and the resulting number of clusters.
+Then we run a grid-search using as a range of values for eps = $[0.1, 2.9]$ \ref{fig:dbscan_metrics}. Through the grid search in combination with the k-th distance plot (\ref{fig:dbscan_distances}) , we could get a better understanding of the kind of results we could expect for each rank and the resulting number of clusters.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=.6\textwidth]{dbscan_metrics}
+\includegraphics[width=.6\textwidth]{plots/dbscan/dbscan_metrics}
 \captionof{figure}{Chosen hyper-parameters $eps=1$ and $n=3$}
 \label{fig:dbscan_metrics}
 \end{figure}
 
 \subsubsection{Results interpretation}
-The best combination of hyperparameters seemed to be $eps=1$ and $n=3$. The clusters result very unbalanced in the number of elements, probably the smaller clusters were very distant from the original distribution and this resulted in having clusters with very different characteristic from the single bigger cluster which characterise most of the players:
+With most combinations of hyperparameters the clusters results unbalanced and there were an high number of outliers.
+However assigning $eps=1$ and $n=3$ (AGGIORNARE GLI IPERPARAM) the results are satisfactory.
+
+The clusters result fairly balanced in the number of elements, except from a smaller cluster composed of just three top players: Roger Federer, Simona Williams and Simona Halep
+The noise labelled by DBSCAN was none other than very bad o very good player.
+The two remaining clusters represented either good or bad players in term of \textit{mean\_rank\_points} or \textit{matches\_won\_ratio}.
 
 \begin{itemize}
 \item \textbf{Cluster 1 , 2, -1}
@@ -370,10 +375,10 @@ The best combination of hyperparameters seemed to be $eps=1$ and $n=3$. The clus
 	 \end{itemize}
 \item \textbf{Cluster 0}: The bigger cluster, relative to the remaining larger group
 \end{itemize}	
-	
+
 \begin{figure}[h]
 \centering
-\includegraphics[width=.6\textwidth]{dbscan_results}
+\includegraphics[width=\textwidth]{plots/dbscan/dbscan_results}
 \captionof{figure}{Results of DBSCAN}
 \label{fig:dbscan_results}
 \end{figure}
@@ -383,7 +388,7 @@ As in the DBSCAN we decided to go for a StandardScaler. The dendrogram used to c
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=.6\textwidth]{hierarchical_dendrogram}
+\includegraphics[width=.6\textwidth]{plots/hierarchical/hierarchical_dendrogram}
 \captionof{figure}{Results of Hierarchical}
 \label{fig:hierarchical_dendrogram}
 \end{figure}
@@ -408,7 +413,7 @@ Weak players were further divided in:
 	
 \begin{figure}[h]
 \centering
-\includegraphics[width=.6\textwidth]{hierarchical_results}
+\includegraphics[width=.6\textwidth]{plots/hierarchical/hierarchical_results}
 \captionof{figure}{Results of Hierarchical}
 \label{fig:hierarchical_results}
 \end{figure}
@@ -424,7 +429,7 @@ For the current time being, we tried to exploit the Expectation-Maximization clu
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=.6\textwidth]{gm_results}
+\includegraphics[width=.6\textwidth]{plots/gaussian_mixture//gm_results}
 \captionof{figure}{Results of Gaussian Mixture}
 \label{fig:gm_results}
 \end{figure}
