@@ -1,11 +1,19 @@
+# TODO
 
-Datamining da fare subito:
+## CLASSIFICATION
 
-- aggiornare discussione k-means con nuove immagini
+- parametri da controllare e aggiungerne nuovi
+- feature selection
 
-- rifare discussione di dbscan e gerarchico -> guarda che discussione ha fatto l'altro gruppo di DM l’hanno scorso e copia le stesse visualizzazioni
+## GENERALE
 
+- GRAFICI nella prima parte del REPORT
+- time series controllo/aggiunta
+- commentare notebook con COSA stiamo facendo e RISULTATI dopo il report
 
+---
+
+## VECCHIO TODO
 
 Datamining miglioramenti:
 
