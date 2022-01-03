@@ -14,7 +14,7 @@ COMMENTARE RISULTATI DOPO IL REPORT
   - naive bayes (provare iperparametri) ✓
 
   - random forest (vedere meglio come funziona) DOMENICO
-  - knn (vedere meglio come funzionano i vari algo) ALEX
+  - ~~knn (vedere meglio come funzionano i vari algo) ALEX~~
 
   JACOPO
 
