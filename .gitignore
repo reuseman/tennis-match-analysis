@@ -4,6 +4,7 @@ nb-examples/
 .DS_Store
 
 datasets/players.csv
+datasets/players_classification.csv
 datasets/tennis_matches_cleaned.csv
 
 .vscode
