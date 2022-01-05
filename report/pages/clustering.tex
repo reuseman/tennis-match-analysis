@@ -1,4 +1,5 @@
 \section{Clustering}
+\label{sec:clustering}
 In this part we explore an in-depth comparison of different clustering algorithms, such as K-Means, DBSCAN, Hierarchical. Then a small parenthesis is opened on other options such as the Expectation-maximization algorithm, X-Means and Fuzzy C-Means.
 
 \subsection{Features selection}
@@ -18,20 +19,12 @@ As a results we obtained the following uncorrelated features:
 	\label{fig:correlation_plot}
 	\captionof{figure}{Correlation Plot}\label{fig1}
 \end{center}
-At this point the remaining features were: 'lrpOnMxrp', '\textit{matches\_won\_ratio}', '\textit{mean\_rank\_points}',\\ '\textit{mean\_tourney\_spectators}', '\textit{max\_tourney\_revenue}'.\\
+At this point the remaining features were: '\textit{lrpOnMxrp}', '\textit{matches\_won\_ratio}', '\textit{mean\_rank\_points}',\\ '\textit{max\_tourney\_revenue}'.\\
 Those features will be used as a starting point in the clustering.
 
 \subsection{Pre-processing}
-In order to prepare the data for the clustering, other steps were made:
-\begin{itemize}
-	\item Additional cleaning
-	      \begin{itemize}
-	      	\item There were no null values present in the data: by dropping nan values from \textit{lrpOnMxrp} feature.
-	      	\item Higher quality data: after iterating between feature selection and clustering, we found out that by filtering players just by taking the one who played at least 15 games, we were able to gain higher quality results.
-	      \end{itemize}
-	\item Normalization of the data with MinMaxScaler in order to assign the same weight to each clustered feature.
-\end{itemize}
-Given the steps performed, the final number of players used to cluster is equal to 2997.
+In order to prepare the data for the clustering, we performed a normalization of the data with MinMaxScaler in order to assign the same weight to each clustered feature.
+The number of players used to cluster is equal to 2997.
 
 \subsection{K-means}
 \label{sec:k-means}
@@ -56,58 +49,62 @@ Given the steps performed, the final number of players used to cluster is equal 
 % \end{figure}
 The first step was to find the \textbf{optimal K}. It was done by following the elbow rule, that suggested to use $k=4$ where the SSE score was 151.183 (Fig. \ref{fig:kmeans_elbow_rule}). On the other hand, even the Silhouette score had the maximum value with $k=4$ (Fig. \ref{fig:kmeans_silhouette_score}), hence it was trivial to decide that the optimal $k$ overall was $k=4$. Moreover, the Silhouette score per cluster is represented in Fig. \ref{fig:kmeans_silhouette_average} and each cluster is balanced enough. Cluster 1 is the only one where a tiny amount of points has a negative score. Nonetheless, the overall balance is extremely good, because there is no presence of clusters with a silhouette score below the average and there are no wide fluctuations in the size of the silhouette plots.
 
-\begin{figure}[h]
-  \begin{subfigure}[b]{0.32\textwidth}
-		\includegraphics[width=\textwidth]{plots/kmeans/kmeans_elbow_rule}
-    \caption{Elbow rule}
+\begin{figure}[!htb]
+	\centering
+	\begin{minipage}{.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{plots/kmeans/kmeans_elbow_rule}
+		\captionof{figure}{Elbow rule}
 		\label{fig:kmeans_elbow_rule}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.32\textwidth}
-		\includegraphics[width=\textwidth]{plots/kmeans/kmeans_silhouette_score}
-		\caption{Silhouette score}
+	\end{minipage}%
+	\begin{minipage}{.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{plots/kmeans/kmeans_silhouette_score}
+		\captionof{figure}{Silhouette score}
 		\label{fig:kmeans_silhouette_score}
-  \end{subfigure}
-	\hfill
-	\begin{subfigure}[b]{0.32\textwidth}
-		\includegraphics[width=\textwidth]{plots/kmeans/kmeans_silhouette_average}
-		\caption{Silhouette score average}
+	\end{minipage}
+	\begin{minipage}{.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{plots/kmeans/kmeans_silhouette_average}
+		\captionof{figure}{Silhouette score average}
 		\label{fig:kmeans_silhouette_average}
-  \end{subfigure}
-	\caption{K-means metrics}
+	\end{minipage}
 \end{figure}
-
 
 \subsubsection{Results interpretation}
-\begin{figure}[h]
-  \begin{subfigure}[b]{0.48\textwidth}
+\begin{figure}[!h]
+	\centering
+	\begin{minipage}{.45\textwidth}
+		\centering
 		\includegraphics[width=\textwidth]{plots/kmeans/hist_age.png}
-		\caption{Histogram of age for male/female}
-		\label{fig:kmeans_hist_age}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.48\textwidth}
+		\subcaptionof{(a) histogram of age for male/female}
+		\label{fig:age_kmeans}
+	\end{minipage}%
+	\begin{minipage}{.45\textwidth}
+		\centering
 		\includegraphics[width=\textwidth]{plots/kmeans/hist_log_mean_rank_points.png}
-		\caption{Histogram of mean rank points for male/female}
-		\label{fig:kmeans_hist_rank_points}
-  \end{subfigure}
-	\begin{subfigure}[b]{0.48\textwidth}
+		\subcaptionof{(b) histogram of mean rank points for male/female}
+		\label{fig:mean_rank_points_kmeans}
+	\end{minipage}
+	\begin{minipage}{.45\textwidth}
+		\centering
 		\includegraphics[width=\textwidth]{plots/kmeans/kmeans-box-plot-matches-played.png}
-		\caption{Box plot of total matches played}
-		\label{fig:kmeans_box_plot_matches_played}
-  \end{subfigure}
-	\begin{subfigure}[b]{0.48\textwidth}
+		\subcaptionof{(c) box plot of total matches played}
+		\label{fig:total_match_played_kmeans}
+	\end{minipage}%
+	\begin{minipage}{.45\textwidth}
+		\centering
 		\includegraphics[width=\textwidth]{plots/kmeans/kmeans-box-plot-lrponavgrp.png}
-		\caption{Box plot of last rank points on average rank points}
-		\label{fig:kmeans_box_plot_lrponavgrp}
-	\end{subfigure}
-	\caption{Distributions of features within the dataset}
+		\subcaptionof{(d) box plot of last rank points on average rank points}
+		\label{fig:lrpOnAvgrp_kmeans}
+	\end{minipage}
+	\captionof{figure}{Distributions of features within the dataset}
 	\label{fig:kmeans_distributions}
 \end{figure}
-
-The clustering algorithm manages to find interesting groupings. Analysing Figure \ref{fig:kmeans_hist_age}, it can be seen that cluster 0 has a lower average age and cluster 1 a higher one. 
-On the other hand, in Figure \ref{fig:kmeans_hist_rank_points} you can see a clearer division compared to the case described above and this is also due to the fact that it was used for clustering. Clusters 0 and 3 have lower average rank points than the two clusters. In addition, one can appreciate how the clustering found an extremely similar grouping regardless of gender, and this is also true for the other features that are not represented in this report but can be found in the attached Jupyter notebook.
-In Figure \ref{fig:kmeans_box_plot_matches_played}, instead, a clear division can be seen in terms of the experience accumulated by the players; in clusters 1 and 2 the number of games played is on average lower than in the other two clusters. 
-Finally, in Figure Image \ref{fig:kmeans_box_plot_lrponavgrp}, we can appreciate the grouping by last rank points on average, which expresses the trend of the performance and cluster 0 and 1 have an average value that expresses an improvement, while the other two a worsening performance.
+The clustering algorithm manages to find interesting groupings. Analysing Figure \ref{fig:kmeans_distributions} (a), it can be seen that cluster 0 has a lower average age and cluster 1 a higher one. 
+On the other hand, in Figure \ref{fig:kmeans_distributions} (b) you can see a clearer division compared to the case described above and this is also due to the fact that it was used for clustering. Clusters 0 and 3 have lower average rank points than the two clusters. In addition, one can appreciate how the clustering found an extremely similar grouping regardless of gender, and this is also true for the other features that are not represented in this report but can be found in the attached Jupyter notebook.
+In Figure \ref{fig:kmeans_distributions} (c), instead, a clear division can be seen in terms of the experience accumulated by the players; in clusters 1 and 2 the number of games played is on average lower than in the other two clusters. 
+Finally, in Figure Image \ref{fig:kmeans_distributions} (d), we can appreciate the grouping by last rank points on average, which expresses the trend of the performance and cluster 0 and 1 have an average value that expresses an improvement, while the other two a worsening performance.
 \\
 The interpretation we gave to the results came from looking at the graph of centroids (Fig. \ref{fig:kmeans_centroid}) and looking at external features not used in the algorithm that seemed relevant, resulting in the following:
 \begin{itemize}
@@ -118,17 +115,18 @@ The interpretation we gave to the results came from looking at the graph of cent
 \end{itemize}
 \begin{figure}[h]
 	\centering
-  \begin{subfigure}[b]{0.48\textwidth}
+	\begin{minipage}{.50\textwidth}
+		\centering
 		\includegraphics[width=\textwidth]{plots/kmeans/scatter_pca.png}
-		\caption{PCA visualization}
+		\captionof{figure}{PCA visualization}
 		\label{fig:pca_visualization}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.48\textwidth}
+	\end{minipage}%
+	\begin{minipage}{.50\textwidth}
+		\centering
 		\includegraphics[width=\textwidth]{plots/kmeans/centers_plot.png}
-		\caption{K-means centroids}
+		\captionof{figure}{Plotting k-means centroids}
 		\label{fig:kmeans_centroid}
-  \end{subfigure}
-	\caption{K-means visualization}
+	\end{minipage}
 \end{figure}
 In Figure \ref{fig:pca_visualization} we compute the Principal Component Analysis related to the whole feature of the dataset, and we plot with respect to the two greater components, here we can depict the good separation among the clusters that the k-means performed.
 
@@ -155,25 +153,42 @@ Then, in order to find the proper parameters, we run a \textbf{grid-search} (Fig
 
 \subsubsection{Results interpretation}
 The DBSCAN identified two clusters that are extremely heterogeneous and produced the following results which can be seen in Figure \ref{fig:dbscan_pca}, where the PCA visualization is shown, while in Figure \ref{fig:dbscan_scatter} where one can see a Pareto distribution, where 80\% of the players are poor and 20\% are good. In more detail, the results can be interpreted as follows:
+
 \begin{figure}[h]
 	\centering
-  \begin{subfigure}[b]{0.38\textwidth}
+	\begin{minipage}{.43\textwidth}
+		\centering
 		\includegraphics[width=\textwidth]{plots/dbscan/dbscan_pca.png}
-		\caption{PCA visualization}
+		\captionof{figure}{PCA visualization}
 		\label{fig:dbscan_pca}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.48\textwidth}
+	\end{minipage}%
+	\begin{minipage}{.57\textwidth}
+		\centering
 		\includegraphics[width=\textwidth]{plots/dbscan/dbscan_scatter.png}
 		\captionof{figure}{Results of DBSCAN}
 		\label{fig:dbscan_scatter}
-  \end{subfigure}
-	\caption{DBSCAN visualization}
+	\end{minipage}
 \end{figure}
 \begin{itemize}
     \item \textbf{Cluster 0} represents the \textbf{average Joe} (80.08\%). They have an average rank points of $72$, and the average number of matches played is $81$. Their trend of growth is slightly increasing, with a value of $1.14$.
     \item \textbf{Cluster 1} represents the \textbf{good players} (19.68\%). They have an average rank point of $658$, and fairly experienced with an average number of matches played that is $237$. Their trend of growth is increasing, with a value of $1.54$.
     \item \textbf{Outliers} are the \textbf{Gods of tennis} (0.23\%), such as Novak Djokovic, Rafael Nadal, Roger Federer, Simona Halep, Serena Williams. They have an outstanding average rank points of $6609$ and an average age of $29$ years (the average is 22 years old)! It's interesting to see that their average number of matches played is the same as Cluster 1, so the experience is the same. Moreover, their average trend of growth is decreasing with a value of $0,71$.
 \end{itemize}	
+
+
+% \begin{figure}[h]
+% 	\centering
+% 	\includegraphics[width=\textwidth]{plots/dbscan/dbscan_scatter}
+% 	\captionof{figure}{Results of DBSCAN}
+% 	\label{fig:dbscan_scatter}
+% \end{figure}
+
+% \begin{figure}[h]
+% 	\centering
+% 	\includegraphics[width=\textwidth]{plots/dbscan/dbscan_pca.png}
+% 	\captionof{figure}{PCA visualization}
+% 	\label{fig:dbscan_pca}
+% \end{figure}
 
 \subsection{Hierarchical}
 \label{sec:hierarchical}
@@ -189,29 +204,33 @@ So taking the \textbf{Average method} with 2 clusters as a reference, the result
 	\item{ \textbf{Cluster 0} represents the \textbf{good players} (30.36\%): those with an average rank points of 577.62 and fairly experienced with an average number of matches played that is 201.26.}
 	\item{ \textbf{Cluster 1} represent the \textbf{bad players} (69.63\%): those with an average rank points of 40.30 and with a low amount of experience that is an average number of matches played that is 73.31.}
 \end{itemize}
-
-\begin{figure}[h]
-  \begin{subfigure}[b]{0.48\textwidth}
+\begin{figure}[h!]
+	\centering
+	\begin{minipage}{.50\textwidth}
+		\centering
 		\includegraphics[width=\textwidth]{plots/hierarchical/hierarchical_dendogram_ward.png}
-		\caption{Ward}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.48\textwidth}
+		\subcaptionof{(a) Ward}
+	\end{minipage}%
+	\begin{minipage}{.50\textwidth}
+		\centering
 		\includegraphics[width=\textwidth]{plots/hierarchical/hierarchical_dendogram_complete.png}
-		\caption{Complete/Max}
-  \end{subfigure}
-	\begin{subfigure}[b]{0.48\textwidth}
+		\subcaptionof{(b) Complete/Max}
+	\end{minipage}
+	\begin{minipage}{.50\textwidth}
+		\centering
 		\includegraphics[width=\textwidth]{plots/hierarchical/hierarchical_dendogram_single.png}
-		\caption{Single/Min}
-  \end{subfigure}
-	\begin{subfigure}[b]{0.48\textwidth}
+		\subcaptionof{(c) Single/Min}
+	\end{minipage}%
+	\begin{minipage}{.50\textwidth}
+		\centering
 		\includegraphics[width=\textwidth]{plots/hierarchical/hierarchical_dendogram_average.png}
-		\caption{Average}
-	\end{subfigure}
-	\caption{Dendrograms for hierarchical clustering}
+		\subcaptionof{(d) Average}
+	\end{minipage}
+	\captionof{figure}{Dendrograms for hierarchical clustering}
 	\label{figure:hierarchical_dendrograms}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \begin{tabular}{|l|l|l|l|}
 \hline
@@ -266,5 +285,4 @@ The algorithm was first used with the aim of finding a number of clusters of 4, 
 \end{figure}
 
 \subsubsection{X-means}
-TODO check theory again\\
 Another trail we made was with X-means. We initialised the centroids with k++ initializer and set a maximum number of clusters of $40$ with the BIC algorithm performing the bisection. The results varied greatly, and often the number of clusters was particularly high or even the maximum. So the results are not interpretable, most probably due to the fact that the distribution of the data is not globular.
